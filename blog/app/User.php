@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Requests\UserRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','role_id',
     ];
 
     /**
@@ -36,4 +37,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public static function updateUser(UserRequest $request, $id)
+    {
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->role_id = $request->role;
+
+        $user->save();
+
+        return $user;
+    }
 }
